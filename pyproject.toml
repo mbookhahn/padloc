@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "padloc"
+version = "1.0.0"
+description = "PadLoc: training-free floor-plan localization by sparse geometric matching"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Marian Bookhahn" }, { name = "Frank Neumann" }]
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "opencv-python>=4.7",
+  "concave-hull>=0.0.6",
+  "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+gpu = ["torch>=2.0"]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+include = ["padloc*"]

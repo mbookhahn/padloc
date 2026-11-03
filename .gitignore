@@ -1,0 +1,6 @@
+fixtures
+fixtures/
+runs/
+padloc-fixtures-*.tar.gz
+__pycache__/
+*.pyc
