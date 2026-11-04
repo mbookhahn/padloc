@@ -4,3 +4,4 @@ runs/
 padloc-fixtures-*.tar.gz
 __pycache__/
 *.pyc
+f3loc/

@@ -16,7 +16,8 @@ online pose](docs/padloc_method.gif)
 
 *One 100-frame Gibson trial (Superior, UnLoc monocular depth), drawn from the pipeline's own
 intermediate results. The first pose lands 8.9 m off; the second window relocalizes it, and the
-online error then stays below 0.35 m (last-10 RMSE 0.19 m).*
+online error then stays below 0.35 m (last-10 RMSE 0.19 m). Floor plan and trajectory from
+F3Loc's Gibson data, CC BY-NC-SA 4.0 (`DATA_LICENSE.md`).*
 
 ## Install
 
@@ -66,15 +67,26 @@ integrates odometry; `padloc.datasets` has the Gibson/Bonn adapters used by the 
 
 ## Reproduce the paper's numbers
 
-Download the fixture package (per-frame depth columns, odometry, floor plans and poses;
-98 MB, 290 MB extracted) from the
-[v1.0.0 release](https://github.com/mbookhahn/padloc/releases/tag/v1.0.0) and extract it
-in the repository root:
+1. Download the fixture package (per-frame depth columns and odometry of every cell, Bonn floor
+   plans and poses; 96 MB, 288 MB extracted) from the
+   [v1.0.1 release](https://github.com/mbookhahn/padloc/releases/tag/v1.0.1) and extract it in
+   the repository root.
+2. The Gibson floor plans and poses are not redistributed here. Download the nine `gibson_t`
+   test scenes of F3Loc's
+   [Gibson Floorplan Localization Dataset](https://doi.org/10.3929/ethz-b-000670118) (one zip
+   per scene, 1.3 GB) and install their `map.png` and `poses.txt` into `fixtures/` with
+   `examples/install_gibson_inputs.py`, which checks each file's SHA-256. The Bonn cells run
+   without this step.
 
 ```bash
-curl -LO https://github.com/mbookhahn/padloc/releases/download/v1.0.0/padloc-fixtures-v1.0.0.tar.gz
-shasum -a 256 padloc-fixtures-v1.0.0.tar.gz          # e2d5fb9a9311f9a441c26cc3b953dec9a97252a22745fb5649bbe185e5db89e7
-tar xzf padloc-fixtures-v1.0.0.tar.gz                # -> fixtures/
+curl -LO https://github.com/mbookhahn/padloc/releases/download/v1.0.1/padloc-fixtures-v1.0.1.tar.gz
+shasum -a 256 padloc-fixtures-v1.0.1.tar.gz          # e46589a400c57a707be661295aa917c0e8bb483f0001b0d21bc4aeb2c3621cdc
+tar xzf padloc-fixtures-v1.0.1.tar.gz                # -> fixtures/
+for s in Spencerville Spotswood Springhill Stilwell Stokes Sumas Superior Swormville Woonsocket; do
+  curl -fL --create-dirs -o "f3loc/$s.zip" \
+    "https://libdrive.ethz.ch/index.php/s/dvKdj8WhmZuIaNw/download?path=%2FGibson%20Floorplan%20Localization%20Dataset%2Fgibson_t&files=$s"
+done
+python examples/install_gibson_inputs.py f3loc       # map.png + poses.txt of the 9 scenes -> fixtures/
 PADLOC_FFT_BACKEND=torch python examples/reproduce_tables.py               # all 41 cells
 PADLOC_FFT_BACKEND=torch python examples/reproduce_tables.py gibson/unloc  # cells by substring
 ```
@@ -130,6 +142,7 @@ readouts, the dump patches and drivers in `tools/`, the scorer
 
 ## License
 
-MIT (code). The fixture package redistributes inputs derived from the Gibson
-`gibson_t` split of F3Loc, from F3Loc's and UnLoc's depth networks and from Bonn
-LiLocBench; their own licenses apply to that data.
+Code: MIT (`LICENSE`). Data: the fixture package and `docs/padloc_method.gif` are adapted from
+LiLocBench and from F3Loc's Gibson Floorplan Localization Dataset, both CC BY-NC-SA 4.0, and are
+licensed under CC BY-NC-SA 4.0 (non-commercial use; adaptations under the same license).
+`DATA_LICENSE.md` lists the sources, our changes and the Gibson Database of Spaces terms.

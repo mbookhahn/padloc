@@ -5,4 +5,4 @@ from .reference import Reference
 from .windows import Frame
 
 __all__ = ["PadLocConfig", "PadLoc", "ChunkResult", "Reference", "Frame"]
-__version__ = "1.0.0"
+__version__ = "1.0.1"

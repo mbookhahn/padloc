@@ -11,6 +11,7 @@ frame keeps the causal L = 0 pose emitted by its time). Writes one CSV per cell
 (per-chunk rows, both readouts) and prints, per cell and readout, the pooled last-10
 SR@1 m, the mean (R) and median (sR) last-10 RMSE over successful chunks, the all-trial
 median (mR) and SWA, followed by the verdict against ``expected.json`` (the published SR).
+The Gibson cells also need F3Loc's floor plans and poses (``examples/install_gibson_inputs.py``).
 """
 from __future__ import annotations
 
@@ -29,6 +30,7 @@ from padloc.config import BONN_LIDAR, BONN_RGBD, BONN_STRUCTURAL, GIBSON   # noq
 from padloc.datasets import bonn, gibson                     # noqa: E402
 from padloc.metrics import chunk_metrics, pooled             # noqa: E402
 
+GIB_DIR = Path("gibson") / "Gibson Floorplan Localization Dataset" / "gibson_t"
 GIB_SCENES = ["Spencerville", "Spotswood", "Springhill", "Stilwell", "Stokes", "Sumas", "Superior", "Swormville", "Woonsocket"]
 GIB_T = [15, 20, 35, 50, 100]
 USEQS = ["static_0", "dynamics_0", "lt_changes_0", "lt_changes_dynamics_0"]
@@ -63,7 +65,7 @@ def run_scene(scene, depth, cfg, *, traj_len, chunks, out_csv, log):
 
 def cells(fix: Path, flt):
     out = []
-    gib_root = fix / "gibson" / "Gibson Floorplan Localization Dataset" / "gibson_t"
+    gib_root = fix / GIB_DIR
     for T in GIB_T:
         for arm in ("mono", "comp", "unloc"):
             out.append(("gibson", arm, T, dict(kind="gibson", arm=arm, root=gib_root, T=T)))
@@ -98,7 +100,11 @@ def main():
     fmt = lambda p: "  ".join(f"{ro} SR={q['SR@1m']:.3f} R={q['meanRMSE_success']:.2f} sR={q['medRMSE_success']:.2f} "   # noqa: E731
                               f"mR={q['medRMSE_all']:.2f} SWA={q['SWA']:.3f}" for ro, q in p.items()) + f"  n={p['chunk_end']['n']}"
     results, cell_rows = {}, {}
-    for table, grp, T, spec in cells(fix, args.filters):
+    todo = cells(fix, args.filters)
+    missing = [s for s in (scenes_filter or GIB_SCENES) if not all((fix / GIB_DIR / s / f).is_file() for f in ("map.png", "poses.txt"))]
+    if missing and any(spec["kind"] == "gibson" for *_, spec in todo):
+        sys.exit(f"Gibson floor plans / poses missing for {', '.join(missing)}: install them with examples/install_gibson_inputs.py (README)")
+    for table, grp, T, spec in todo:
         rows = []
         if spec["kind"] == "gibson":
             cfg = PadLocConfig(cell_m=0.10, lag_L=0, **GIBSON)
