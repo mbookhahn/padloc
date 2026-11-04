@@ -6,8 +6,9 @@ No training: a masked normalized cross-correlation over a few dominant wall
 orientations, decoded online by a moving-pose Gaussian-mixture Bayes filter and a
 consensus readout.
 
-This repository is the reference implementation of the WACV 2027 paper and reproduces
-its PadLoc numbers on Gibson and Bonn (LiLocBench).
+This repository is the reference implementation of the WACV 2027 paper
+([arXiv:2611.05172](https://arxiv.org/abs/2611.05172)) and reproduces its PadLoc numbers on
+Gibson and Bonn (LiLocBench).
 
 ## Install
 
