@@ -10,6 +10,14 @@ This repository is the reference implementation of the WACV 2027 paper
 ([arXiv:2611.05172](https://arxiv.org/abs/2611.05172)) and reproduces its PadLoc numbers on
 Gibson and Bonn (LiLocBench).
 
+![PadLoc on one Gibson trial: wall depth becomes a local raster, a masked NCC matches it
+against the plan, a Gaussian-mixture filter tracks the hypotheses and a consensus reports the
+online pose](docs/padloc_method.gif)
+
+*One 100-frame Gibson trial (Superior, UnLoc monocular depth), drawn from the pipeline's own
+intermediate results. The first pose lands 8.9 m off; the second window relocalizes it, and the
+online error then stays below 0.35 m (last-10 RMSE 0.19 m).*
+
 ## Install
 
 ```bash
